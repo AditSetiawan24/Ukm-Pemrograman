@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>elemen dan tag</title>
+</head>
+
+<body>
+  <h1>Heading 1</h1>
+  <h2>Heading 2</h2>
+  <h3>Heading 3</h3>
+
+
+  <p>Ini adalah paragraf text. Ini bisa berisi <a href="https://instagram.com/ad0ts?igshid=YTQwZjQ0NmI0OA=="> Tautan </a> dan element <strong> Terformat </strong> Lainnya</p>
+
+  <h2>Last</h2>
+  <h3>Ordered List (ol)</h3>
+  <ol>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+  </ol>
+
+  <h3>Unordered List (ul)</h3>
+  <ul>
+    <li>Item A</li>
+    <li>Item B</li>
+    <li>Item C</li>
+  </ul>
+
+  <h2>Link</h2>
+  <p>Kunjungi <a href="https://www.w3schools.com/html/" target="_blank">W3schools.com</a> untuk belajar html</p>
+
+  <h2>Gambar</h2>
+  <img src="ichigo.jpg" alt="Placeholder image" style="width: 50%">
+
+  <h2>Tabel</h2>
+  <table border="1">
+    <tr>
+      <th>Header 1</th>
+      <th>Header 2</th>
+      <th>Header 3</th>
+    </tr>
+    <tr>
+      <td>Row 1, cell 1</td>
+      <td>Row 1, cell 2</td>
+      <td>Row 1, cell 3</td>
+    </tr>
+    <tr>
+      <td>Row 2, cell 1</td>
+      <td>Row 2, cell 2</td>
+      <td>Row 2, cell 3</td>
+    </tr>
+  </table>
+
+</body>
+
+</html>￼Enter￼Enter
