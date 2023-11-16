@@ -1,0 +1,50 @@
+<!DOCTYPE html> 
+ <!DOCTYPE html> 
+ <html> 
+ <head> 
+         <meta charset="utf-8"> 
+         <meta name="viewport" content="width=device-width, initial-scale=1"> 
+         <link rel="stylesheet" href="biodata.css"> 
+         <title>Biodata</title> 
+ </head> 
+ <body> 
+         <h1>Biodata</h1> 
+         <form action="/submit" method="POST"> 
+         <div class="container"> 
+                 <label for="nama">Nama</label><br> 
+                 <input type="text" placeholder="Nama" name="nama" id="nama" required><br><br> 
+  
+                 <label for="email">Email</label><br> 
+                 <input type="email" placeholder="Email" name="email" id="email" required><br><br> 
+  
+                 <label for="alamat">Alamat</label><br> 
+                 <textarea id="alamat" placeholder="Alamat" name="alamat" rows="4" cols="40" required></textarea><br><br> 
+  
+                 <label>Gender</label><br> 
+                 <input type="radio" name="gender" id="Laki-laki" value="Laki-laki" required> 
+                 <label for="Laki-laki">Laki-laki</label> 
+                 <input type="radio" name="gender" id="Perempuan" value="Perempuan"required> 
+                 <label for="Perempuan">Perempuan</label><br><br> 
+  
+                 <label>Hobi</label><br> 
+                 <input type="checkbox" name="hobi" id="Futsal" value="Futsal"> 
+                 <label for="Futsal">Futsal</label> 
+                 <input type="checkbox" name="hobi" id="Voli" value="Voli"> 
+                 <label for="Voli">Voli</label> 
+                 <input type="checkbox" name="hobi" id="Basket" value="Basket"> 
+                 <label for="Basket">Basket</label> 
+                 <input type="checkbox" name="hobi" id="Badminton" value="Badminton"> 
+                 <label for="Badminton">Badminton</label><br><br> 
+  
+                 <label for="prodi">Prodi</label><br> 
+                 <select id="prodi" name="prodi"> 
+                         <option value="Sistem Informasi">Sistem Informasi</option> 
+                         <option value="Teknik Informatika">Teknik Informatika</option> 
+                         <option value="Teknik Multimedia dan Jaringan">Teknik Multimedia dan Jaringan</option> 
+                         <option value="Komputerisasi Akuntansi">Komputerisasi Akuntansi</option> 
+                 </select><br><br> 
+         </div> 
+                 <input class="submit" type="submit" name="submit"> 
+         </form> 
+ </body> 
+ </html>￼Enter
