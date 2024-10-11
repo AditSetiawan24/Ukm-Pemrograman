@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lights Out Puzzle</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #151515;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 2px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #ddd;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .cell.on {
+            background-color: #ff0;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container" id="grid"></div>
+
+    <script>
+        const gridSize = 5;
+        const grid = document.getElementById('grid');
+
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.classList.add('cell', 'on');
+                cell.addEventListener('click', () => toggleCell(i));
+                grid.appendChild(cell);
+            }
+        }
+
+        function toggleCell(index) {
+            const cells = Array.from(grid.children);
+            const x = index % gridSize;
+            const y = Math.floor(index / gridSize);
+
+            toggle(cells[index]);
+            if (x > 0) toggle(cells[index - 1]); // Left
+            if (x < gridSize - 1) toggle(cells[index + 1]); // Right
+            if (y > 0) toggle(cells[index - gridSize]); // Up
+            if (y < gridSize - 1) toggle(cells[index + gridSize]); // Down
+        }
+
+        function toggle(cell) {
+            cell.classList.toggle('on');
+        }
+
+        createGrid();
+    </script>
+</body>
+</html>
