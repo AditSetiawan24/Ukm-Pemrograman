@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Survival - 10 Stages</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .stage-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .timer {
+            background: rgba(255, 100, 100, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .lives {
+            background: rgba(100, 255, 100, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .target-text {
+            font-size: 2em;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            letter-spacing: 2px;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .input-area {
+            margin: 20px 0;
+        }
+
+        #userInput {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        #userInput:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .start-screen, .game-screen, .end-screen {
+            display: none;
+        }
+
+        .start-screen.active, .game-screen.active, .end-screen.active {
+            display: block;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .incorrect {
+            color: #f44336;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 5px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .penalty-flash {
+            animation: flash 0.5s ease-in-out;
+        }
+
+        @keyframes flash {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(255, 0, 0, 0.3); }
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+        }
+
+        .reward-highlight {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            }
+            100% {
+                box-shadow: 0 4px 25px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .game-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .target-text {
+                font-size: 1.5em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div class="start-screen active">
+            <h1>🎯 Typing Survival</h1>
+            <div class="instructions">
+                <h3>📋 Cara Bermain:</h3>
+                <ul>
+                    <li>Ketik kata/angka yang muncul dengan tepat</li>
+                    <li>Setiap stage memiliki batas waktu yang semakin pendek</li>
+                    <li>Salah ketik akan mengurangi waktu 3 detik</li>
+                    <li>Anda memiliki 3 nyawa untuk menyelesaikan 10 stage</li>
+                    <li>Kecepatan dan ketepatan adalah kunci!</li>
+                </ul>
+                <div class="reward-highlight">
+                    🎁 Bagi yang bisa menyelesaikan hingga stage 10 maka akan mendapat uang 25.000 (non cash) 🎁
+                </div>
+            </div>
+            <button class="btn" onclick="startGame()">🚀 Mulai Game</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen">
+            <h1>Typing Survival</h1>
+            <div class="game-info">
+                <div class="stage-display">Stage: <span id="currentStage">1</span>/10</div>
+                <div class="timer">Waktu: <span id="timeLeft">30</span>s</div>
+                <div class="lives">Nyawa: <span id="livesLeft">3</span> ❤️</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="target-text" id="targetText">Siap?</div>
+            
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Ketik di sini..." autocomplete="off">
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div>WPM</div>
+                    <div id="wpm">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>Akurasi</div>
+                    <div id="accuracy">100%</div>
+                </div>
+                <div class="stat-item">
+                    <div>Benar</div>
+                    <div id="correctCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Screen -->
+        <div class="end-screen">
+            <h1 id="endTitle">Game Over!</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <div>Stage Tercapai</div>
+                    <div id="finalStage">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>WPM Rata-rata</div>
+                    <div id="finalWPM">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>Akurasi Total</div>
+                    <div id="finalAccuracy">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div>Total Benar</div>
+                    <div id="finalCorrect">0</div>
+                </div>
+            </div>
+            <button class="btn" onclick="restartGame()">🔄 Main Lagi</button>
+            <button class="btn" onclick="goToStart()">🏠 Menu Utama</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let currentStage = 1;
+        let timeLeft = 30;
+        let lives = 3;
+        let gameActive = false;
+        let timer = null;
+        let startTime = null;
+        let totalCorrect = 0;
+        let totalTyped = 0;
+        let totalWPM = 0;
+        let wpmReadings = 0;
+
+        // Stage configurations
+        const stages = [
+            { time: 30, words: ['hello', 'world', 'game', 'type', 'fast'] },
+            { time: 28, words: ['javascript', 'coding', 'challenge', 'survival', 'keyboard'] },
+            { time: 25, words: ['123456', 'qwerty', 'asdfgh', 'zxcvbn', 'mnbvcx'] },
+            { time: 22, words: ['programming', 'developer', 'algorithm', 'function', 'variable'] },
+            { time: 20, words: ['abc123', 'xyz789', '456def', '789ghi', '012jkl'] },
+            { time: 18, words: ['console.log', 'document.write', 'function()', 'return true', 'for(i=0)'] },
+            { time: 15, words: ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM', 'POIUYTREWQ', 'LKJHGFDSA'] },
+            { time: 12, words: ['1a2b3c4d5e', '9z8y7x6w5v', '4u3t2s1r0q', '6p5o4n3m2l', '8k7j6h5g4f'] },
+            { time: 10, words: ['!@#$%^&*()', '+=_-[]{}|', ';:\'",.<>?/', '`~1234567890', ')(*&^%$#@!'] },
+            { time: 8, words: ['F1n4l$t4g3!', 'H4rd3$tL3v3l', 'Typ1ng$urv1v4l', 'M4$t3rTyp3r!', 'Ch4mp10n!@#'] }
+        ];
+
+        let currentWords = [];
+        let currentWordIndex = 0;
+        let currentTargetText = '';
+
+        // DOM elements
+        const startScreen = document.querySelector('.start-screen');
+        const gameScreen = document.querySelector('.game-screen');
+        const endScreen = document.querySelector('.end-screen');
+        const userInput = document.getElementById('userInput');
+        const targetText = document.getElementById('targetText');
+        const currentStageEl = document.getElementById('currentStage');
+        const timeLeftEl = document.getElementById('timeLeft');
+        const livesLeftEl = document.getElementById('livesLeft');
+        const progressFill = document.getElementById('progressFill');
+        const wpmEl = document.getElementById('wpm');
+        const accuracyEl = document.getElementById('accuracy');
+        const correctCountEl = document.getElementById('correctCount');
+
+        function startGame() {
+            currentStage = 1;
+            lives = 3;
+            totalCorrect = 0;
+            totalTyped = 0;
+            totalWPM = 0;
+            wpmReadings = 0;
+            
+            startScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            
+            startStage();
+        }
+
+        function startStage() {
+            if (currentStage > 10) {
+                winGame();
+                return;
+            }
+
+            gameActive = true;
+            timeLeft = stages[currentStage - 1].time;
+            currentWords = [...stages[currentStage - 1].words];
+            currentWordIndex = 0;
+            
+            updateDisplay();
+            showNextWord();
+            startTimer();
+            
+            userInput.value = '';
+            userInput.focus();
+        }
+
+        function showNextWord() {
+            if (currentWordIndex >= currentWords.length) {
+                // Stage completed
+                nextStage();
+                return;
+            }
+            
+            currentTargetText = currentWords[currentWordIndex];
+            targetText.textContent = currentTargetText;
+            userInput.value = '';
+            startTime = Date.now();
+        }
+
+        function nextStage() {
+            currentStage++;
+            currentWordIndex = 0;
+            clearInterval(timer);
+            
+            if (currentStage <= 10) {
+                setTimeout(() => {
+                    startStage();
+                }, 1000);
+            } else {
+                winGame();
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 0) {
+                    loseLife();
+                }
+            }, 1000);
+        }
+
+        function loseLife() {
+            lives--;
+            clearInterval(timer);
+            
+            if (lives <= 0) {
+                gameOver();
+            } else {
+                // Flash penalty
+                document.querySelector('.game-container').classList.add('penalty-flash');
+                setTimeout(() => {
+                    document.querySelector('.game-container').classList.remove('penalty-flash');
+                }, 500);
+                
+                setTimeout(() => {
+                    startStage();
+                }, 1000);
+            }
+        }
+
+        function updateDisplay() {
+            currentStageEl.textContent = currentStage;
+            timeLeftEl.textContent = timeLeft;
+            livesLeftEl.textContent = lives;
+            correctCountEl.textContent = totalCorrect;
+            
+            // Update progress bar
+            const progress = ((currentStage - 1) * 10) + (currentWordIndex / currentWords.length * 10);
+            progressFill.style.width = progress + '%';
+            
+            // Update accuracy
+            const accuracy = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) : 100;
+            accuracyEl.textContent = accuracy + '%';
+        }
+
+        function calculateWPM() {
+            if (!startTime) return 0;
+            
+            const timeElapsed = (Date.now() - startTime) / 1000 / 60; // in minutes
+            const wordsTyped = currentTargetText.length / 5; // standard word length
+            return Math.round(wordsTyped / timeElapsed);
+        }
+
+        function applyPenalty() {
+            timeLeft = Math.max(0, timeLeft - 3);
+            document.querySelector('.game-container').classList.add('penalty-flash');
+            setTimeout(() => {
+                document.querySelector('.game-container').classList.remove('penalty-flash');
+            }, 300);
+        }
+
+        function gameOver() {
+            gameActive = false;
+            clearInterval(timer);
+            
+            gameScreen.classList.remove('active');
+            endScreen.classList.add('active');
+            
+            document.getElementById('endTitle').textContent = '💀 Game Over!';
+            document.getElementById('finalStage').textContent = currentStage - 1;
+            document.getElementById('finalWPM').textContent = wpmReadings > 0 ? Math.round(totalWPM / wpmReadings) : 0;
+            document.getElementById('finalAccuracy').textContent = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) + '%' : '100%';
+            document.getElementById('finalCorrect').textContent = totalCorrect;
+        }
+
+        function winGame() {
+            gameActive = false;
+            clearInterval(timer);
+            
+            gameScreen.classList.remove('active');
+            endScreen.classList.add('active');
+            
+            document.getElementById('endTitle').textContent = '🏆 Selamat! Anda Menang!';
+            document.getElementById('finalStage').textContent = '10/10';
+            document.getElementById('finalWPM').textContent = wpmReadings > 0 ? Math.round(totalWPM / wpmReadings) : 0;
+            document.getElementById('finalAccuracy').textContent = totalTyped > 0 ? Math.round((totalCorrect / totalTyped) * 100) + '%' : '100%';
+            document.getElementById('finalCorrect').textContent = totalCorrect;
+        }
+
+        function restartGame() {
+            endScreen.classList.remove('active');
+            startGame();
+        }
+
+        function goToStart() {
+            endScreen.classList.remove('active');
+            startScreen.classList.add('active');
+        }
+
+        // Input handling
+        userInput.addEventListener('input', (e) => {
+            if (!gameActive) return;
+            
+            const inputValue = e.target.value;
+            const targetValue = currentTargetText;
+            
+            // Check if input matches target so far
+            if (targetValue.startsWith(inputValue)) {
+                targetText.className = 'target-text correct';
+                
+                // Check if word is complete
+                if (inputValue === targetValue) {
+                    totalCorrect++;
+                    totalTyped++;
+                    
+                    // Calculate WPM for this word
+                    const wpm = calculateWPM();
+                    wpmEl.textContent = wpm;
+                    totalWPM += wpm;
+                    wpmReadings++;
+                    
+                    currentWordIndex++;
+                    showNextWord();
+                }
+            } else {
+                targetText.className = 'target-text incorrect';
+                // Apply penalty for wrong typing
+                applyPenalty();
+                totalTyped++;
+            }
+            
+            updateDisplay();
+        });
+
+        // Prevent form submission on Enter
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+
+        // Initialize
+        updateDisplay();
+    </script>
+</body>
+</html>

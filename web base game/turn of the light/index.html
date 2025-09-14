@@ -7,49 +7,260 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: #151515;
+            background: linear-gradient(45deg, #151515, #2a2a2a);
+            font-family: Arial, sans-serif;
+            color: white;
+            transition: background 0.5s ease;
         }
+        
+        .game-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            backdrop-filter: blur(10px);
+        }
+        
+        .instructions h2 {
+            color: #ffeb3b;
+            margin-top: 0;
+        }
+        
+        .instructions ol {
+            line-height: 1.6;
+        }
+        
+        .reward {
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .timer {
+            background: rgba(255, 235, 59, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: 2px solid #ffeb3b;
+        }
+        
+        .progress {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .lights-count {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9800, #4caf50);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .reset-button {
+            background: linear-gradient(45deg, #f44336, #e91e63);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .reset-button:hover {
+            transform: scale(1.05);
+        }
+        
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(5, 50px);
-            grid-template-rows: repeat(5, 50px);
-            gap: 2px;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 3px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
         }
+        
         .cell {
-            width: 50px;
-            height: 50px;
-            background-color: #ddd;
-            border: 1px solid #ccc;
+            width: 60px;
+            height: 60px;
+            background-color: #666;
+            border: 2px solid #444;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .cell:hover {
+            transform: scale(1.05);
+        }
+        
         .cell.on {
-            background-color: #ff0;
+            background: linear-gradient(45deg, #ffeb3b, #ffc107);
+            border-color: #ff9800;
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5);
         }
+        
+        .cell::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cell.on::after {
+            opacity: 1;
+        }
+        
+        .victory-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .victory-content {
+            background: linear-gradient(45deg, #4caf50, #8bc34a);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .victory-content h2 {
+            margin-top: 0;
+            font-size: 2em;
+        }
+        
+        /* Background variations based on lights off */
+        .bg-0 { background: linear-gradient(45deg, #151515, #2a2a2a); }
+        .bg-1 { background: linear-gradient(45deg, #1a1a2e, #16213e); }
+        .bg-2 { background: linear-gradient(45deg, #0f3460, #16537e); }
+        .bg-3 { background: linear-gradient(45deg, #533483, #7209b7); }
+        .bg-4 { background: linear-gradient(45deg, #6a0572, #a8297b); }
+        .bg-5 { background: linear-gradient(45deg, #155a89, #159895); }
     </style>
 </head>
-<body>
-    <div class="grid-container" id="grid"></div>
+<body class="bg-0">
+    <div class="game-container">
+        <div class="instructions">
+            <h2>🎮 Petunjuk Permainan Lights Out</h2>
+            <ol>
+                <li><strong>Objektif:</strong> Matikan semua lampu! Awalnya lampu berwarna kuning, tujuannya adalah mengubah semua menjadi abu-abu.</li>
+                <li><strong>Cara Bermain:</strong> Setiap kotak yang diklik akan menghidupkan/mematikan dirinya sendiri dan mempengaruhi kotak di kiri, kanan, atas, dan bawah.</li>
+                <li><strong>Bonus:</strong> <span class="reward">Bagi yang bisa menyelesaikan dalam waktu kurang dari 1 menit akan mendapatkan bonus 25.000 (non cash)! 💰</span></li>
+            </ol>
+        </div>
+        
+        <div class="game-info">
+            <div class="timer" id="timer">⏱️ 00:00</div>
+            <div class="progress">
+                <div class="lights-count" id="lightsCount">Lampu Hidup: <span id="lightsOn">25</span>/25</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            <button class="reset-button" id="resetButton" onclick="resetGame()">🔄 Reset Game</button>
+        </div>
+        
+        <div class="grid-container" id="grid"></div>
+    </div>
+    
+    <div class="victory-message" id="victoryMessage">
+        <div class="victory-content">
+            <h2>🎉 Selamat!</h2>
+            <p>Anda berhasil mematikan semua lampu!</p>
+            <p id="timeResult"></p>
+            <p id="bonusMessage"></p>
+            <button class="reset-button" onclick="resetGame(); document.getElementById('victoryMessage').style.display = 'none';">Main Lagi</button>
+        </div>
+    </div>
 
     <script>
         const gridSize = 5;
         const grid = document.getElementById('grid');
+        let startTime = null;
+        let timerInterval = null;
+        let gameActive = false;
 
         function createGrid() {
             grid.innerHTML = '';
             for (let i = 0; i < gridSize * gridSize; i++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
-                cell.classList.add('cell', 'on');
-                cell.addEventListener('click', () => toggleCell(i));
+                cell.classList.add('on'); // Semua lampu hidup di awal
+                cell.addEventListener('click', () => handleCellClick(i));
                 grid.appendChild(cell);
             }
+            updateProgress();
+        }
+
+        function handleCellClick(index) {
+            if (!gameActive) {
+                startTimer();
+                gameActive = true;
+            }
+            toggleCell(index);
+            updateProgress();
+            checkVictory();
         }
 
         function toggleCell(index) {
@@ -68,6 +279,85 @@
             cell.classList.toggle('on');
         }
 
+        function updateProgress() {
+            const cells = Array.from(grid.children);
+            const lightsOn = cells.filter(cell => cell.classList.contains('on')).length;
+            const lightsOff = gridSize * gridSize - lightsOn;
+            
+            document.getElementById('lightsOn').textContent = lightsOn;
+            
+            // Update progress bar
+            const progressPercent = (lightsOff / (gridSize * gridSize)) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            
+            // Change background based on progress
+            const bgClass = Math.min(Math.floor(lightsOff / 5), 5);
+            document.body.className = `bg-${bgClass}`;
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (!startTime) return;
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function getElapsedTime() {
+            if (!startTime) return 0;
+            return Math.floor((Date.now() - startTime) / 1000);
+        }
+
+        function checkVictory() {
+            const cells = Array.from(grid.children);
+            const lightsOn = cells.filter(cell => cell.classList.contains('on')).length;
+            
+            if (lightsOn === 0) {
+                stopTimer();
+                gameActive = false;
+                
+                const elapsedTime = getElapsedTime();
+                const minutes = Math.floor(elapsedTime / 60);
+                const seconds = elapsedTime % 60;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                document.getElementById('timeResult').textContent = `Waktu Anda: ${timeString}`;
+                
+                if (elapsedTime < 60) {
+                    document.getElementById('bonusMessage').innerHTML = 
+                        '<strong style="color: #4caf50;">🎉 BONUS! Anda mendapatkan 25.000 (non cash)!</strong>';
+                } else {
+                    document.getElementById('bonusMessage').textContent = 
+                        'Coba lagi untuk mendapatkan bonus!';
+                }
+                
+                document.getElementById('victoryMessage').style.display = 'flex';
+            }
+        }
+
+        function resetGame() {
+            stopTimer();
+            startTime = null;
+            gameActive = false;
+            document.getElementById('timer').textContent = '⏱️ 00:00';
+            document.body.className = 'bg-0';
+            createGrid();
+        }
+
+        // Initialize game
         createGrid();
     </script>
 </body>
